@@ -5,14 +5,14 @@ import { BookDefinition, GenericEntry, AllDataBooks, FieldDefinition, DataDesaEn
 import { DATA_DESA_FIELDS } from '../constants';
 
 
-const SQL_JS_WASM_PATH = 'https://esm.sh/sql.js@1.10.3/dist/sql-wasm.wasm'; // Restored path
+const SQL_JS_WASM_PATH = 'https://esm.sh/sql.js@1.10.3/dist/sql-wasm.wasm';
 const DB_NAME_INDEXEDDB = 'digital_desa_db';
 const DB_STORE_KEY = 'sqlite_database';
 const DATA_DESA_TABLE_NAME = DATA_DESA_KEY; // 'data_desa_umum'
 const LOCAL_INSTALLATION_TOKEN_KEY = 'local_installation_token';
 
 let SQL: initSqlJs.SqlJsStatic;
-let dbInstance: initSqlJs.Database | null = null; // This might become less relevant if App.tsx manages the instance post-restore
+let dbInstance: initSqlJs.Database | null = null; 
 
 // Function to generate a simple UUID
 function generateUUID() {
@@ -25,7 +25,16 @@ function generateUUID() {
 export async function getSqlJsStatic(): Promise<initSqlJs.SqlJsStatic> {
   if (!SQL) {
     SQL = await initSqlJs({
-      mainWasmUrl: SQL_JS_WASM_PATH // Explicitly provide the WASM URL
+      // Using locateFile as an alternative to mainWasmUrl
+      locateFile: (file: string) => {
+        if (file === 'sql-wasm.wasm') {
+          return SQL_JS_WASM_PATH;
+        }
+        // sql.js might request other files in some scenarios, though unlikely for basic setup.
+        // Returning the filename itself might cause issues if those files are not co-located.
+        // However, for sql-wasm.wasm, this provides the correct CDN path.
+        return file;
+      }
     });
   }
   return SQL;

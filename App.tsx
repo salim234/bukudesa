@@ -469,7 +469,6 @@ const App: React.FC = () => {
             </svg>
             <h1 id="access-denied-title" className="text-2xl sm:text-3xl font-bold text-red-700 mb-3">Akses Ditolak</h1>
             <div id="access-denied-description" className="text-gray-700 space-y-3 text-sm sm:text-base">
-                <p>Lisensi Aplikasi Administrasi Digital Desa ini telah digunakan atau diaktifkan di komputer atau profil browser lain.</p>
                 <p>Sesuai ketentuan, aplikasi ini hanya dapat digunakan pada satu instalasi untuk satu dataset.</p>
                 <p className="mt-4 text-xs sm:text-sm text-gray-500">
                     Jika ini adalah komputer instalasi asli Anda dan Anda melihat pesan ini setelah membersihkan data browser, data aktivasi lokal mungkin hilang. Untuk memulihkan akses, Anda mungkin perlu mereset data aplikasi (ini akan menghapus semua data yang ada) atau menghubungi dukungan teknis jika tersedia.
