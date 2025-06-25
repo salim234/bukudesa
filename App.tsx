@@ -27,6 +27,12 @@ import {
 const AUTH_STORAGE_KEY = 'digitalDesaAuth';
 const LOCAL_INSTALLATION_TOKEN_KEY = 'local_installation_token';
 
+const HamburgerIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+  </svg>
+);
+
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
@@ -38,7 +44,7 @@ const App: React.FC = () => {
   const [allData, setAllData] = useState<AllDataBooks>({});
   const [dataDesa, setDataDesa] = useState<DataDesaEntry | null>(null);
   const [isLoadingDataDesa, setIsLoadingDataDesa] = useState(false);
-  const [isAccessBlocked, setIsAccessBlocked] = useState<boolean>(false); // For single-install check
+  const [isAccessBlocked, setIsAccessBlocked] = useState<boolean>(false); 
 
   const [selectedBookKey, setSelectedBookKey] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState<'dashboard' | 'book' | 'planning' | 'data_desa' | 'usage_guide'>('dashboard');
@@ -47,8 +53,14 @@ const App: React.FC = () => {
   const [changePasswordError, setChangePasswordError] = useState<string | null>(null);
   const [changePasswordSuccess, setChangePasswordSuccess] = useState<string | null>(null);
 
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false); // State for mobile sidebar
+
   const location = useLocation();
   const navigate = useNavigate();
+
+  const toggleMobileSidebar = useCallback(() => {
+    setIsMobileSidebarOpen(prev => !prev);
+  }, []);
 
   useEffect(() => {
     async function initDbAndLoadData() {
@@ -65,22 +77,21 @@ const App: React.FC = () => {
           const villageData = await getDataDesa(database);
           setDataDesa(villageData);
 
-          // Single-install access check
           if (villageData?.installation_id) {
             const localToken = localStorage.getItem(LOCAL_INSTALLATION_TOKEN_KEY);
             if (localToken !== villageData.installation_id) {
               console.warn("Access Blocked: Installation ID mismatch or local token missing.");
               setIsAccessBlocked(true);
             } else {
-              setIsAccessBlocked(false); // Ensure access is not blocked if IDs match
+              setIsAccessBlocked(false); 
             }
           } else {
-             setIsAccessBlocked(false); // No installation ID in DB, so not blocked yet
+             setIsAccessBlocked(false); 
           }
 
         } catch (error) {
           console.error("Error initializing database or loading data:", error);
-          setIsAccessBlocked(true); // Block access on critical error during init
+          setIsAccessBlocked(true); 
         } finally {
           setIsLoadingDb(false);
           setIsLoadingDataDesa(false);
@@ -88,10 +99,10 @@ const App: React.FC = () => {
       }
     }
     initDbAndLoadData();
-  }, [isAuthenticated, db]); // Rerun if db changes (e.g., after restore)
+  }, [isAuthenticated, db]); 
 
   useEffect(() => {
-    if (!isAuthenticated || isAccessBlocked) return; // Don't navigate if access is blocked
+    if (!isAuthenticated || isAccessBlocked) return; 
 
     const { pathname, search, hash: routeHash } = location;
     const cleanHash = routeHash.replace(/^#\//, '');
@@ -137,8 +148,6 @@ const App: React.FC = () => {
       setIsAuthenticated(true);
       localStorage.setItem(AUTH_STORAGE_KEY, 'true');
       setLoginError(null);
-      // DB init and access check will happen in useEffect due to isAuthenticated change.
-      // Navigate to root, then useEffect handles further routing or blocking.
       navigate('/', { replace: true }); 
     } else {
       setLoginError('Kata sandi salah. Silakan coba lagi.');
@@ -148,7 +157,6 @@ const App: React.FC = () => {
   const handleLogout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem(AUTH_STORAGE_KEY);
-    // Do NOT remove LOCAL_INSTALLATION_TOKEN_KEY on logout
     setDb(null); 
     setAllData({}); 
     setDataDesa(null);
@@ -157,7 +165,8 @@ const App: React.FC = () => {
     setShowChangePasswordModal(false);
     setChangePasswordError(null);
     setChangePasswordSuccess(null);
-    setIsAccessBlocked(false); // Reset blocked state on logout
+    setIsAccessBlocked(false); 
+    setIsMobileSidebarOpen(false); // Close mobile sidebar on logout
     navigate('/'); 
   };
 
@@ -208,7 +217,8 @@ const App: React.FC = () => {
 
 
   const handleSelectNavigation = useCallback((viewType: 'book' | 'planning' | 'dashboard' | 'data_desa' | 'usage_guide', key?: string) => {
-    if (!isAuthenticated || isAccessBlocked) return; // Prevent navigation if blocked
+    if (!isAuthenticated || isAccessBlocked) return; 
+    setIsMobileSidebarOpen(false); // Close mobile sidebar on navigation
 
     if (viewType === 'planning') {
       navigate('/planning');
@@ -293,23 +303,17 @@ const App: React.FC = () => {
   const handleSaveDataDesa = async (updatedData: Omit<DataDesaEntry, 'id'>) => {
     if (!db || isAccessBlocked) return;
     try {
-      await saveDataDesa(db, updatedData); // This will handle installation_id logic
+      await saveDataDesa(db, updatedData); 
       const reloadedDataDesa = await getDataDesa(db);
       setDataDesa(reloadedDataDesa);
       
-      // Post-save check for activation and local token consistency
       if (reloadedDataDesa?.installation_id) {
         const localToken = localStorage.getItem(LOCAL_INSTALLATION_TOKEN_KEY);
         if (localToken !== reloadedDataDesa.installation_id) {
-          // This case implies saveDataDesa set the token, but something is wrong.
-          // Or, if it was an update and somehow token was missing.
-          // For safety, re-set if newInstallationId was generated inside saveDataDesa (which it does if needed)
-          // The current implementation of saveDataDesa already handles setting localStorage.
-          // So, simply verify access.
            setIsAccessBlocked(true); 
            console.warn("Access blocked post-save: Mismatch after saving Data Desa.");
         } else {
-           setIsAccessBlocked(false); // Ensure unblocked if consistent
+           setIsAccessBlocked(false); 
         }
       }
       alert('Data Desa berhasil disimpan.');
@@ -361,7 +365,6 @@ const App: React.FC = () => {
         const SQL = await getSqlJsStatic();
         const newDb = new SQL.Database(new Uint8Array(arrayBuffer));
         
-        // Ensure tables exist, including data_desa_umum with installation_id column
         const dataDesaTableFields = [...DATA_DESA_FIELDS];
         if (!dataDesaTableFields.find(f => f.name === 'installation_id')) {
             dataDesaTableFields.push({ name: 'installation_id', label: 'Installation ID', type: 'text' });
@@ -389,7 +392,6 @@ const App: React.FC = () => {
         const villageData = await getDataDesa(newDb);
         setDataDesa(villageData);
         
-        // Re-check access after restore
         if (villageData?.installation_id) {
             const localToken = localStorage.getItem(LOCAL_INSTALLATION_TOKEN_KEY);
             if (localToken !== villageData.installation_id) {
@@ -400,18 +402,18 @@ const App: React.FC = () => {
                 alert('Database berhasil dipulihkan.');
             }
         } else {
-            setIsAccessBlocked(false); // No installation ID in restored DB, allow activation
+            setIsAccessBlocked(false); 
             alert('Database berhasil dipulihkan. Aplikasi siap untuk diaktifkan.');
         }
         
         setCurrentView('dashboard');
         setSelectedBookKey(null);
+        setIsMobileSidebarOpen(false); // Close mobile sidebar after restore
         navigate('/', { replace: true });
 
       } catch (error) {
         console.error('Error restoring database:', error);
         alert(`Gagal memulihkan database. File mungkin rusak atau bukan backup yang valid. (${error instanceof Error ? error.message : String(error)})`);
-        // Potentially set isAccessBlocked to true if restore fails badly, or re-initialize a clean DB
       } finally {
         setIsLoadingDb(false);
       }
@@ -433,7 +435,7 @@ const App: React.FC = () => {
 
   if (!isAuthenticated) return <LoginView onLogin={handleLogin} loginError={loginError} />;
 
-  if (isLoadingDb || (isAuthenticated && !db && !isAccessBlocked)) { // Show loading if authenticated but DB not ready and not blocked yet
+  if (isLoadingDb || (isAuthenticated && !db && !isAccessBlocked)) { 
     return (
       <div className="flex h-screen items-center justify-center bg-gray-100">
         <div className="text-center">
@@ -449,7 +451,6 @@ const App: React.FC = () => {
     );
   }
 
-  // Render blocking screen if access is blocked
   if (isAccessBlocked) {
     return (
       <div className="fixed inset-0 bg-red-50 flex flex-col items-center justify-center p-6 sm:p-10 z-[100]" role="alertdialog" aria-labelledby="access-denied-title" aria-describedby="access-denied-description">
@@ -510,7 +511,7 @@ const App: React.FC = () => {
                     
                     <h3 className="mt-6 mb-2 text-xl font-semibold text-gray-700">Navigasi Utama</h3>
                     <ul className="list-disc pl-5 space-y-1">
-                        <li>Gunakan menu di sebelah kiri (Sidebar) untuk mengakses berbagai buku administrasi atau fitur khusus.</li>
+                        <li>Gunakan menu di sebelah kiri (Sidebar) untuk mengakses berbagai buku administrasi atau fitur khusus. Pada perangkat mobile, sidebar dapat diakses melalui tombol menu (ikon tiga garis) di pojok kiri atas.</li>
                         <li><strong>Dashboard:</strong> Halaman awal yang menampilkan ringkasan data penting dan statistik desa.</li>
                         <li><strong>Perencanaan Desa:</strong> Fitur terpadu untuk mengelola dokumen RPJMDes, RKPDes, dan APBDes secara berjenjang.</li>
                         <li><strong>Data Umum Desa:</strong> (Terdapat di bawah kategori "Administrasi Umum") Digunakan untuk mengisi dan mengelola informasi dasar mengenai desa Anda yang akan digunakan pada kop surat dan laporan. Menyimpan data di sini untuk pertama kali akan mengaktifkan lisensi aplikasi untuk instalasi ini.</li>
@@ -563,7 +564,7 @@ const App: React.FC = () => {
                      <ul className="list-disc pl-5 space-y-1">
                         <li>Isi data secara lengkap dan akurat.</li>
                         <li>Gunakan browser versi terbaru (Chrome, Firefox, Edge, Safari).</li>
-                        <li>Idealnya digunakan pada desktop/laptop.</li>
+                        <li>Idealnya digunakan pada desktop/laptop. Tampilan mobile dioptimalkan untuk aksesibilitas, namun input data kompleks lebih nyaman di layar besar.</li>
                     </ul>
                     <p className="mt-8 text-center text-gray-600">Terima kasih telah menggunakan Aplikasi Administrasi Digital Desa!</p>
                 </div>
@@ -594,7 +595,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 antialiased">
+    <div className="flex h-screen bg-gray-100 antialiased overflow-hidden"> {/* Added overflow-hidden to body */}
       <Sidebar
         menuItems={MENU_ITEMS}
         categories={BOOK_CATEGORIES}
@@ -605,10 +606,35 @@ const App: React.FC = () => {
         onBackupDatabase={handleBackupDatabase}
         onRestoreDatabase={handleRestoreDatabase}
         onChangePassword={handleShowChangePasswordModal} 
+        isMobileSidebarOpen={isMobileSidebarOpen}
+        onCloseMobileSidebar={toggleMobileSidebar}
       />
-      <main className={`flex-1 ${currentView === 'dashboard' ? 'p-4 sm:p-6' : 'p-6 sm:p-8'} overflow-y-auto`}>
-        {renderMainContent()}
-      </main>
+      <div className="flex-1 flex flex-col overflow-hidden"> {/* Main content wrapper */}
+        {/* Mobile Header with Hamburger */}
+        <header className="md:hidden bg-white shadow-sm p-3 sticky top-0 z-30">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={toggleMobileSidebar}
+              className="text-gray-600 hover:text-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 rounded"
+              aria-label="Buka menu navigasi"
+            >
+              <HamburgerIcon className="h-7 w-7" />
+            </button>
+            <h1 className="text-lg font-semibold text-sky-600">
+              { selectedBookDefinition?.label || 
+                (currentView === 'planning' ? 'Perencanaan Desa' : 
+                (currentView === 'dashboard' ? 'Dashboard' : 'Digital Desa')) 
+              }
+            </h1>
+            <div className="w-7"></div> {/* Spacer for balance */}
+          </div>
+        </header>
+
+        <main className={`flex-1 ${currentView === 'dashboard' ? 'p-4 sm:p-6' : 'p-3 sm:p-6 md:p-8'} overflow-y-auto`}>
+          {renderMainContent()}
+        </main>
+      </div>
+
       {showChangePasswordModal && (
         <ChangePasswordModal
           onClose={handleCloseChangePasswordModal}
