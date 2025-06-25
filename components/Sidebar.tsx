@@ -92,11 +92,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const actualGroupedMenuItems = Object.entries(categories)
-    .filter(([key]) => key !== BOOK_CATEGORIES.PERENCANAAN_DESA && key !== BOOK_CATEGORIES.PEMBUAT_SURAT) 
+    .filter(([categoryKey]) => categoryKey !== 'PERENCANAAN_DESA' && categoryKey !== 'PEMBUAT_SURAT') 
     .map(([categoryKey, categoryName]) => ({
       key: categoryKey, 
       name: categoryName,
-      items: menuItems.filter(item => item.category === categoryName),
+      items: menuItems.filter(item => item.category === categoryName && item.key !== PEMBUAT_SURAT_KEY), // Explicitly exclude PEMBUAT_SURAT_KEY item
     }));
   
   const suratMakerMenuItem = menuItems.find(item => item.key === PEMBUAT_SURAT_KEY);

@@ -1,10 +1,11 @@
+
 import initSqlJs from 'sql.js';
 import localforage from 'localforage';
 import { BookDefinition, GenericEntry, AllDataBooks, FieldDefinition, DataDesaEntry, DATA_DESA_KEY } from '../types';
 import { DATA_DESA_FIELDS } from '../constants';
 
 
-const SQL_JS_WASM_PATH = 'https://esm.sh/sql.js@1.10.3/dist/sql-wasm.wasm';
+const SQL_JS_WASM_PATH = 'https://esm.sh/sql.js@1.10.3/dist/sql-wasm.wasm'; // Restored path
 const DB_NAME_INDEXEDDB = 'digital_desa_db';
 const DB_STORE_KEY = 'sqlite_database';
 const DATA_DESA_TABLE_NAME = DATA_DESA_KEY; // 'data_desa_umum'
@@ -23,7 +24,9 @@ function generateUUID() {
 
 export async function getSqlJsStatic(): Promise<initSqlJs.SqlJsStatic> {
   if (!SQL) {
-    SQL = await initSqlJs({ locateFile: () => SQL_JS_WASM_PATH });
+    SQL = await initSqlJs({
+      mainWasmUrl: SQL_JS_WASM_PATH // Explicitly provide the WASM URL
+    });
   }
   return SQL;
 }
@@ -286,3 +289,4 @@ export async function saveDataDesa(db: initSqlJs.Database, data: Omit<DataDesaEn
     throw e;
   }
 }
+    
