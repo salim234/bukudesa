@@ -1,6 +1,6 @@
 
 import React from 'react'; // Required for JSX in icons
-import { BookDefinition, FieldDefinition, DATA_DESA_KEY, USAGE_GUIDE_KEY } from './types'; // Added DATA_DESA_KEY, USAGE_GUIDE_KEY
+import { BookDefinition, FieldDefinition, DATA_DESA_KEY, USAGE_GUIDE_KEY, PEMBUAT_SURAT_KEY, KlasifikasiSuratKeterangan } from './types'; 
 
 // Using Heroicons (MIT License) by Tailwind Labs
 // https://heroicons.com/
@@ -103,6 +103,13 @@ export const KeyIcon = (props: React.SVGProps<SVGSVGElement>) => ( // Change Pas
   </svg>
 );
 
+export const PencilSquareIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
+    <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
+    <path d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
+  </svg>
+);
+
 
 export const BOOK_CATEGORIES = {
   ADMINISTRASI_UMUM: "Administrasi Umum",
@@ -110,7 +117,8 @@ export const BOOK_CATEGORIES = {
   ADMINISTRASI_KEUANGAN: "Administrasi Keuangan",
   ADMINISTRASI_PEMBANGUNAN: "Administrasi Pembangunan",
   ADMINISTRASI_LAINNYA: "Administrasi Lainnya (BPD & Lembaga)",
-  PERENCANAAN_DESA: "Perencanaan Desa", // New category
+  PERENCANAAN_DESA: "Perencanaan Desa", 
+  PEMBUAT_SURAT: "Pembuat Surat", // New category
 };
 
 const commonIconProps = { width: 20, height: 20, className: "mr-2 inline-block" };
@@ -127,6 +135,59 @@ const polaPelaksanaanOptions = ['Swakelola', 'Kerjasama Antar Desa', 'Pihak Keti
 const statusDokumenOptions = ['Diajukan', 'Diproses', 'Ditolak', 'Selesai/Terbit', 'Diambil'];
 const statusKehadiranOptions = ['Hadir', 'Sakit', 'Izin', 'Dinas Luar', 'Cuti', 'Alpha'];
 export const statusRpjmdesOptions = ['Dalam Penyusunan', 'Musdes Pembahasan', 'Finalisasi Rancangan', 'Perdes Penetapan', 'Berlaku Aktif', 'Dalam Proses Revisi', 'Sudah Direvisi', 'Selesai/Tidak Berlaku'];
+
+export const KLASIFIKASI_SURAT_KETERANGAN_OPTIONS: KlasifikasiSuratKeterangan[] = [
+  // Kependudukan (470)
+  { kode: "470/01", label: "Surat Keterangan Domisili", deskripsiSingkat: "Menerangkan domisili penduduk." },
+  { kode: "470/02", label: "Surat Keterangan Pindah Datang", deskripsiSingkat: "Untuk penduduk yang pindah datang." },
+  { kode: "470/03", label: "Surat Keterangan Pindah Keluar", deskripsiSingkat: "Untuk penduduk yang pindah keluar." },
+  { kode: "470/04", label: "Surat Keterangan Kelahiran", deskripsiSingkat: "Mencatat peristiwa kelahiran." },
+  { kode: "470/05", label: "Surat Keterangan Kematian", deskripsiSingkat: "Mencatat peristiwa kematian." },
+  { kode: "470/06", label: "Surat Pengantar KTP", deskripsiSingkat: "Pengantar untuk pembuatan KTP." },
+  { kode: "470/07", label: "Surat Pengantar KK", deskripsiSingkat: "Pengantar untuk pembuatan/perubahan KK." },
+  { kode: "470/08", label: "Surat Keterangan Belum Menikah", deskripsiSingkat: "Menyatakan status belum menikah." },
+  { kode: "470/09", label: "Surat Keterangan Janda/Duda", deskripsiSingkat: "Menyatakan status janda/duda." },
+  { kode: "470/10", label: "Surat Keterangan Beda Identitas / Nama", deskripsiSingkat: "Untuk kasus perbedaan data identitas." },
+  // Kesejahteraan Sosial (474)
+  { kode: "474/01", label: "Surat Keterangan Tidak Mampu (SKTM)", deskripsiSingkat: "Untuk keperluan bantuan sosial, keringanan biaya." },
+  { kode: "474/02", label: "Rekomendasi Bantuan Sosial", deskripsiSingkat: "Surat rekomendasi untuk penerimaan bantuan sosial." },
+  { kode: "474/03", label: "Surat Rekomendasi PKH/BPNT", deskripsiSingkat: "Rekomendasi untuk program PKH/BPNT." },
+  { kode: "474/04", label: "Surat Rekomendasi Rumah Tidak Layak Huni (RTLH)", deskripsiSingkat: "Rekomendasi untuk program bantuan RTLH." },
+  // Ekonomi & Usaha (511)
+  { kode: "511/01", label: "Surat Keterangan Usaha (SKU)", deskripsiSingkat: "Menerangkan keberadaan suatu usaha." },
+  { kode: "511/02", label: "Surat Domisili Usaha", deskripsiSingkat: "Menerangkan domisili tempat usaha." },
+  { kode: "511/03", label: "Rekomendasi Izin Usaha Mikro", deskripsiSingkat: "Rekomendasi untuk izin usaha mikro." },
+  { kode: "511/04", label: "Surat Rekomendasi NIB", deskripsiSingkat: "Rekomendasi untuk pengurusan Nomor Induk Berusaha." },
+  // Perizinan & Umum (400)
+  { kode: "400/01", label: "Surat Izin Hajatan", deskripsiSingkat: "Untuk menyelenggarakan acara hajatan." },
+  { kode: "400/02", label: "Surat Izin Keramaian", deskripsiSingkat: "Untuk menyelenggarakan acara yang mengundang keramaian." },
+  { kode: "400/03", label: "Surat Tugas Perjalanan Dinas", deskripsiSingkat: "Untuk aparat desa yang melakukan perjalanan dinas." },
+  { kode: "400/04", label: "Surat Keterangan Izin Orang Tua", deskripsiSingkat: "Pernyataan izin dari orang tua/wali." },
+  { kode: "400/05", label: "Surat Rekomendasi Pemasangan Listrik", deskripsiSingkat: "Rekomendasi untuk pemasangan listrik baru." },
+  { kode: "400/06", label: "Surat Tugas Kader Posyandu/Linmas", deskripsiSingkat: "Surat tugas untuk kader." },
+  { kode: "400/07", label: "Surat Dukungan Kegiatan Masyarakat", deskripsiSingkat: "Dukungan resmi dari desa untuk kegiatan masyarakat." },
+  // Keamanan & Ketertiban (430)
+  { kode: "430/01", label: "Surat Pengantar Pengaduan", deskripsiSingkat: "Pengantar untuk menyampaikan pengaduan ke pihak berwenang." },
+  { kode: "430/02", label: "Surat Keterangan Kehilangan", deskripsiSingkat: "Menerangkan kehilangan dokumen/barang." },
+  { kode: "430/03", label: "Surat Keterangan Tahanan", deskripsiSingkat: "Keterangan terkait status tahanan (jika relevan & berwenang)." },
+  // Keuangan & Pendapatan (900)
+  { kode: "900/01", label: "Surat Keterangan Penghasilan", deskripsiSingkat: "Menerangkan estimasi penghasilan." },
+  { kode: "900/02", label: "Surat Keterangan Keringanan Biaya", deskripsiSingkat: "Untuk permohonan keringanan biaya." },
+  { kode: "900/03", label: "Surat Rekomendasi Beasiswa", deskripsiSingkat: "Rekomendasi untuk pengajuan beasiswa." },
+  // Pertanahan (640)
+  { kode: "640/01", label: "Surat Keterangan Tanah (SKT)", deskripsiSingkat: "Keterangan mengenai status kepemilikan tanah." },
+  { kode: "640/02", label: "Surat Keterangan Riwayat Tanah", deskripsiSingkat: "Menjelaskan sejarah kepemilikan tanah." },
+  { kode: "640/03", label: "Surat Keterangan Jual Beli Tanah", deskripsiSingkat: "Keterangan mengenai transaksi jual beli tanah." },
+  { kode: "640/04", label: "Surat Keterangan Waris Tanah", deskripsiSingkat: "Keterangan mengenai ahli waris tanah." },
+  { kode: "640/05", label: "Surat Sporadik (Penguasaan Fisik Tanah)", deskripsiSingkat: "Pernyataan penguasaan fisik atas sebidang tanah." },
+  // Pernikahan & Perceraian (472)
+  { kode: "472/01", label: "Surat Pengantar Nikah (Model N1-N4)", deskripsiSingkat: "Pengantar untuk proses administrasi pernikahan." },
+  { kode: "472/02", label: "Surat Keterangan Cerai", deskripsiSingkat: "Menerangkan status perceraian." },
+  { kode: "472/03", label: "Surat Izin Orang Tua Nikah", deskripsiSingkat: "Pernyataan izin menikah dari orang tua/wali." },
+  // Default/Lainnya
+  { kode: "000/00", label: "Surat Keterangan Lainnya", deskripsiSingkat: "Untuk keperluan lain yang tidak tercakup." },
+];
+
 
 export const DATA_DESA_FIELDS: FieldDefinition[] = [
   { name: 'nama_desa', label: 'Nama Desa', type: 'text', required: true },
@@ -150,11 +211,11 @@ export const DATA_DESA_FIELDS: FieldDefinition[] = [
 export const MENU_ITEMS: BookDefinition[] = [
   // Data Desa (placed first under Administrasi Umum for visibility)
   {
-    key: DATA_DESA_KEY, // Using the constant from types.ts
+    key: DATA_DESA_KEY, 
     label: 'Data Umum Desa',
     category: BOOK_CATEGORIES.ADMINISTRASI_UMUM,
-    icon: <HomeModernIcon {...commonIconProps} />, // Using a new icon
-    fields: DATA_DESA_FIELDS, // Using the new field definitions
+    icon: <HomeModernIcon {...commonIconProps} />, 
+    fields: DATA_DESA_FIELDS, 
   },
   // Administrasi Umum
   {
@@ -239,7 +300,7 @@ export const MENU_ITEMS: BookDefinition[] = [
   },
   {
     key: 'buku_tanah_desa', label: 'Buku Tanah Milik Desa', category: BOOK_CATEGORIES.ADMINISTRASI_UMUM, icon: <DocumentTextIcon {...commonIconProps} />,
-    fields: [ // Same fields as Tanah Kas, adjust if specific differences are needed
+    fields: [ 
       { name: 'lokasi', label: 'Lokasi (Blok/Persil)', type: 'text', required: true },
       { name: 'luas', label: 'Luas (m2 atau Ha)', type: 'text', required: true },
       { name: 'nomor_sertifikat', label: 'No. Sertifikat', type: 'text' },
@@ -308,7 +369,7 @@ export const MENU_ITEMS: BookDefinition[] = [
     label: 'Petunjuk Penggunaan',
     category: BOOK_CATEGORIES.ADMINISTRASI_UMUM,
     icon: <InformationCircleIcon {...commonIconProps} />,
-    fields: [], // No data fields for a usage guide
+    fields: [], 
   },
 
   // Administrasi Penduduk
@@ -515,7 +576,7 @@ export const MENU_ITEMS: BookDefinition[] = [
   {
     key: 'buku_rpjmdes',
     label: 'Buku RPJMDes',
-    category: BOOK_CATEGORIES.ADMINISTRASI_PEMBANGUNAN, // Stays in this category for data entry, PlanningView is separate
+    category: BOOK_CATEGORIES.ADMINISTRASI_PEMBANGUNAN, 
     icon: <BuildingOfficeIcon {...commonIconProps} />,
     fields: [
       { name: 'tahun_awal_periode', label: 'Tahun Awal Periode RPJMDes', type: 'number', required: true, placeholder: 'YYYY' },
@@ -544,6 +605,79 @@ export const MENU_ITEMS: BookDefinition[] = [
       { name: 'status_rpjmdes', label: 'Status Dokumen RPJMDes', type: 'select', options: statusRpjmdesOptions, required: true },
       { name: 'catatan_revisi_rpjmdes', label: 'Catatan Revisi RPJMDes (jika ada)', type: 'textarea', placeholder: 'Informasi mengenai revisi yang dilakukan.' },
       { name: 'keterangan', label: 'Keterangan Tambahan', type: 'textarea' },
+      // New narrative fields for RPJMDes document generation
+      { name: 'kata_pengantar_rpjmdes_narasi', label: 'Narasi Kata Pengantar RPJMDes', type: 'textarea' },
+      { name: 'bab1_latar_belakang_konteks_umum', label: 'BAB I - Latar Belakang (Konteks Umum Desa)', type: 'textarea' },
+      { name: 'bab1_maksud_tujuan_narasi', label: 'BAB I - Maksud dan Tujuan (Narasi Spesifik Desa)', type: 'textarea' },
+      { name: 'bab1_dasar_hukum_tambahan', label: 'BAB I - Dasar Hukum Tambahan (Spesifik Desa/Daerah)', type: 'textarea' },
+      { name: 'bab1_tahapan_pembentukan_tim_narasi', label: 'BAB I - Tahapan Pembentukan Tim Penyusun', type: 'textarea' },
+      { name: 'bab1_tahapan_penyelarasan_arah_kebijakan_narasi', label: 'BAB I - Tahapan Penyelarasan Arah Kebijakan', type: 'textarea' },
+      { name: 'bab1_tahapan_mengkaji_sdgs_narasi', label: 'BAB I - Tahapan Mengkaji Peta Jalan SDGs Desa', type: 'textarea'},
+      { name: 'bab1_tahapan_mengkaji_rencana_program_narasi', label: 'BAB I - Tahapan Mengkaji Rencana Program Masuk Desa', type: 'textarea'},
+      { name: 'bab1_tahapan_penyusunan_rancangan_narasi', label: 'BAB I - Tahapan Penyusunan Rancangan RPJMDes', type: 'textarea' },
+      { name: 'bab1_tahapan_musrenbang_narasi', label: 'BAB I - Tahapan Musrenbang Desa', type: 'textarea' },
+      { name: 'bab1_tahapan_musdes_penetapan_narasi', label: 'BAB I - Tahapan Musdes Penetapan RPJMDes', type: 'textarea' },
+      { name: 'bab1_tahapan_sosialisasi_narasi', label: 'BAB I - Tahapan Sosialisasi RPJMDes', type: 'textarea' },
+      { name: 'bab2_sejarah_desa_narasi', label: 'BAB II - Sejarah Desa', type: 'textarea' },
+      { name: 'bab2_kondisi_geografis_narasi', label: 'BAB II - Kondisi Geografis Desa', type: 'textarea' },
+      { name: 'bab2_demografi_narasi', label: 'BAB II - Kondisi Demografi/Kependudukan', type: 'textarea' },
+      { name: 'bab2_kesehatan_narasi', label: 'BAB II - Kondisi Kesehatan Masyarakat', type: 'textarea' },
+      { name: 'bab2_pendidikan_narasi', label: 'BAB II - Kondisi Pendidikan', type: 'textarea' },
+      { name: 'bab2_mata_pencaharian_narasi', label: 'BAB II - Kondisi Mata Pencaharian', type: 'textarea' },
+      { name: 'bab2_kesejahteraan_narasi', label: 'BAB II - Kondisi Kesejahteraan Masyarakat', type: 'textarea' },
+      { name: 'bab2_agama_narasi', label: 'BAB II - Kondisi Agama', type: 'textarea' },
+      { name: 'bab2_budaya_narasi', label: 'BAB II - Kondisi Budaya', type: 'textarea' },
+      { name: 'bab2_ekonomi_desa_narasi', label: 'BAB II - Kondisi Ekonomi Desa', type: 'textarea' },
+      { name: 'bab2_infrastruktur_desa_narasi', label: 'BAB II - Kondisi Infrastruktur Desa', type: 'textarea' },
+      { name: 'bab2_pembagian_wilayah_narasi', label: 'BAB II - Pembagian Wilayah Desa', type: 'textarea' },
+      { name: 'bab2_sotk_desa_narasi', label: 'BAB II - Struktur Organisasi Pemerintahan Desa', type: 'textarea' },
+      { name: 'bab2_lembaga_bpd_narasi', label: 'BAB II - Kelembagaan BPD', type: 'textarea' },
+      { name: 'bab3_visi_narasi', label: 'BAB III - Pengantar Visi', type: 'textarea' },
+      { name: 'bab3_misi_narasi', label: 'BAB III - Pengantar Misi', type: 'textarea' },
+      { name: 'bab3_nilai_nilai_narasi', label: 'BAB III - Nilai-nilai Pembangunan Desa', type: 'textarea' },
+      { name: 'bab4_masalah_analisis', label: 'BAB IV - Analisis Permasalahan Desa', type: 'textarea' },
+      { name: 'bab4_potensi_analisis', label: 'BAB IV - Analisis Potensi Desa', type: 'textarea' },
+      { name: 'bab5_arah_kebijakan_pembangunan_narasi', label: 'BAB V - Arah Kebijakan Pembangunan Desa', type: 'textarea' },
+      { name: 'bab5_arah_kebijakan_keuangan_narasi', label: 'BAB V - Arah Kebijakan Keuangan Desa', type: 'textarea' },
+      { name: 'bab6_program_kegiatan_narasi_umum', label: 'BAB VI - Pengantar Program & Kegiatan Pembangunan', type: 'textarea' },
+      { name: 'bab6_bidang_pemerintahan_narasi', label: 'BAB VI - Bidang Penyelenggaraan Pemerintahan Desa (Narasi)', type: 'textarea' },
+      { name: 'bab6_bidang_pembangunan_narasi', label: 'BAB VI - Bidang Pelaksanaan Pembangunan Desa (Narasi)', type: 'textarea' },
+      { name: 'bab6_bidang_pembinaan_narasi', label: 'BAB VI - Bidang Pembinaan Kemasyarakatan (Narasi)', type: 'textarea' },
+      { name: 'bab6_bidang_pemberdayaan_narasi', label: 'BAB VI - Bidang Pemberdayaan Masyarakat (Narasi)', type: 'textarea' },
+      { name: 'bab6_bidang_bencana_narasi', label: 'BAB VI - Bidang Penanggulangan Bencana, Darurat & Mendesak (Narasi)', type: 'textarea' },
+      { name: 'bab7_kesimpulan_narasi', label: 'BAB VII - Kesimpulan RPJMDes', type: 'textarea' },
+      { name: 'bab7_saran_narasi', label: 'BAB VII - Saran Umum RPJMDes', type: 'textarea' },
+      { name: 'bab7_saran_tambahan_1', label: 'BAB VII - Saran Tambahan 1', type: 'textarea' },
+      { name: 'bab7_saran_tambahan_2', label: 'BAB VII - Saran Tambahan 2', type: 'textarea' },
+      // Lampiran checklist / text fields
+      { name: 'lampiran_sk_tim_penyusun', label: 'Lampiran: SK Tim Penyusun RPJM Desa (Ya/Tidak/Deskripsi)', type: 'text' },
+      { name: 'lampiran_rktl_tim_penyusun', label: 'Lampiran: RKTL Tim Penyusun RPJM Desa', type: 'text' },
+      { name: 'lampiran_peta_jalan_sdgs', label: 'Lampiran: Peta Jalan SDGs Desa', type: 'text' },
+      { name: 'lampiran_data_rencana_program_kegiatan_masuk', label: 'Lampiran: Data Rencana Program Kegiatan Masuk Desa', type: 'text' },
+      { name: 'lampiran_gambar_bagan_kelembagaan', label: 'Lampiran: Gambar Bagan Kelembagaan', type: 'text' },
+      { name: 'lampiran_daftar_masalah_potensi_bagan_kelembagaan', label: 'Lampiran: Daftar Masalah/Potensi Bagan Kelembagaan', type: 'text' },
+      { name: 'lampiran_gambar_peta_sosial_desa', label: 'Lampiran: Gambar Peta Sosial Desa', type: 'text' },
+      { name: 'lampiran_daftar_masalah_potensi_sketsa_desa', label: 'Lampiran: Daftar Masalah/Potensi Sketsa Desa', type: 'text' },
+      { name: 'lampiran_gambar_kalender_musim', label: 'Lampiran: Gambar Kalender Musim', type: 'text' },
+      { name: 'lampiran_daftar_masalah_potensi_kalender_musim', label: 'Lampiran: Daftar Masalah/Potensi Kalender Musim', type: 'text' },
+      { name: 'lampiran_gambar_pohon_masalah', label: 'Lampiran: Gambar Pohon Masalah', type: 'text' },
+      { name: 'lampiran_daftar_masalah_potensi_pohon_masalah', label: 'Lampiran: Daftar Masalah/Potensi Pohon Masalah', type: 'text' },
+      { name: 'lampiran_daftar_inventarisir_masalah', label: 'Lampiran: Daftar Inventarisir Masalah', type: 'text' },
+      { name: 'lampiran_daftar_inventarisir_potensi', label: 'Lampiran: Daftar Inventarisir Potensi', type: 'text' },
+      { name: 'lampiran_pengkajian_tindakan_pemecahan_masalah', label: 'Lampiran: Pengkajian Tindakan Pemecahan Masalah', type: 'text' },
+      { name: 'lampiran_penentuan_tindakan_masalah', label: 'Lampiran: Penentuan Tindakan Masalah', type: 'text' },
+      { name: 'lampiran_penentuan_peringkat_tindakan', label: 'Lampiran: Penentuan Peringkat Tindakan', type: 'text' },
+      { name: 'lampiran_daftar_gagasan_dusun_kelompok', label: 'Lampiran: Daftar Gagasan Dusun/Kelompok', type: 'text' },
+      { name: 'lampiran_rekapitulasi_gagasan_dusun_kelompok', label: 'Lampiran: Rekapitulasi Gagasan Dusun/Kelompok', type: 'text' },
+      { name: 'lampiran_rancangan_rpjm_desa', label: 'Lampiran: Rancangan RPJM Desa', type: 'text' },
+      { name: 'lampiran_dokumen_visi_misi_kepala_desa', label: 'Lampiran: Dokumen Visi Misi Kepala Desa', type: 'text' },
+      { name: 'lampiran_dokumen_pokok_pikiran_bpd', label: 'Lampiran: Dokumen Pokok-pokok Pikiran BPD', type: 'text' },
+      { name: 'lampiran_keputusan_tim_penyusun_dll', label: 'Lampiran: Keputusan (Tim Penyusun, Panitia Musrenbang, dll)', type: 'text' },
+      { name: 'lampiran_berita_acara_musyawarah', label: 'Lampiran: Berita Acara Musyawarah', type: 'text' },
+      { name: 'lampiran_undangan_daftar_hadir_musyawarah', label: 'Lampiran: Undangan dan Daftar Hadir Musyawarah', type: 'text' },
+      { name: 'lampiran_notulen_musyawarah', label: 'Lampiran: Notulen Musyawarah', type: 'text' },
+      { name: 'lampiran_peta_desa', label: 'Lampiran: Peta Desa', type: 'text' },
+      { name: 'lampiran_foto_kegiatan_desa', label: 'Lampiran: Foto Kegiatan/Desa', type: 'text' },
     ],
   },
   {
@@ -839,8 +973,16 @@ export const MENU_ITEMS: BookDefinition[] = [
         { name: 'tujuan_pejabat_ditemui', label: 'Pejabat/Staf Desa yang Ditemui', type: 'text'},
     ],
   },
+  // New Menu Item for Surat Maker
+  {
+    key: PEMBUAT_SURAT_KEY,
+    label: 'Buat Surat Desa',
+    category: BOOK_CATEGORIES.PEMBUAT_SURAT,
+    icon: <PencilSquareIcon {...commonIconProps} />,
+    fields: [], // No standard book fields, custom form in component
+  },
 ];
 
 export const PLANNING_ICON = <ClipboardDocumentListIcon {...commonIconProps} />;
 export const DEFAULT_PASSWORD = "admin123"; 
-export const CUSTOM_PASSWORD_STORAGE_KEY = "digitalDesaCustomPassword"; // Added for custom password storage
+export const CUSTOM_PASSWORD_STORAGE_KEY = "digitalDesaCustomPassword";

@@ -1,4 +1,3 @@
-
 import * as XLSX from 'xlsx';
 import { FieldDefinition, GenericEntry, DataDesaEntry } from '../types';
 
@@ -76,14 +75,14 @@ export const printTable = (
 
   const printWindow = window.open('', '_blank');
   if (printWindow) {
-    printWindow.document.write(\`
+    printWindow.document.write(`
       <html>
         <head>
-          <title>\${title} - Cetak</title>
+          <title>${title} - Cetak</title>
           <style>
             @media print {
               @page {
-                size: \${paperSize} landscape; 
+                size: ${paperSize} landscape; 
                 margin: 0.25in;
               }
               body {
@@ -169,16 +168,16 @@ export const printTable = (
           </style>
         </head>
         <body>
-          \${kopSuratHtml}
+          ${kopSuratHtml}
           <div class="print-title-container">
-             <div class="print-title">\${title}</div>
+             <div class="print-title">${title}</div>
           </div>
           <table>
             <thead>
-              <tr>\${columnHeaders}</tr>
+              <tr>${columnHeaders}</tr>
             </thead>
             <tbody>
-              \${tableRows}
+              ${tableRows}
             </tbody>
           </table>
           <script>
@@ -189,7 +188,7 @@ export const printTable = (
           </script>
         </body>
       </html>
-    \`);
+    `);
     printWindow.document.close();
   } else {
     alert('Gagal membuka jendela cetak. Pastikan pop-up blocker tidak aktif.');
@@ -231,7 +230,7 @@ export const exportToXLSX = (
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
 
-  XLSX.writeFile(workbook, \`\${fileName.replace(/ /g, '_')}.xlsx\`);
+  XLSX.writeFile(workbook, `${fileName.replace(/ /g, '_')}.xlsx`);
 };
 
 export const downloadDoc = (htmlContent: string, fileName: string): void => {
@@ -259,35 +258,35 @@ export const printHtmlDocument = (
 ) => {
   let kopSuratHtml = '';
   if (dataDesa) {
-    kopSuratHtml = \`
+    kopSuratHtml = `
       <div style="display: flex; align-items: flex-start; margin-bottom: 10px; padding-bottom: 10px; width: 100%; font-family: Arial, sans-serif; border-bottom: 3px solid black;">
         <div style="flex: 0 0 80px; margin-right: 15px; display: flex; align-items: center; justify-content: center; height: 80px;">
-          \${dataDesa.logo_desa_path ? \`<img src="\${dataDesa.logo_desa_path}" alt="Logo Desa" style="max-width: 70px; max-height: 70px; object-fit: contain;">\` : '<div style="width: 70px; height: 70px; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #777;">Logo</div>'}
+          ${dataDesa.logo_desa_path ? `<img src="${dataDesa.logo_desa_path}" alt="Logo Desa" style="max-width: 70px; max-height: 70px; object-fit: contain;">` : '<div style="width: 70px; height: 70px; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #777;">Logo</div>'}
         </div>
         <div style="flex-grow: 1; text-align: center;">
-          <div style="font-weight: bold; margin: 0; line-height: 1.2; font-size: 14pt;">PEMERINTAH KABUPATEN \${dataDesa.nama_kabupaten_kota?.toUpperCase() || ''}</div>
-          <div style="font-weight: bold; margin: 0; line-height: 1.2; font-size: 16pt;">KECAMATAN \${dataDesa.nama_kecamatan?.toUpperCase() || ''}</div>
-          <div style="font-weight: bold; margin: 0; line-height: 1.2; font-size: 18pt; margin-bottom: 2px;">PEMERINTAH DESA \${dataDesa.nama_desa?.toUpperCase() || ''}</div>
-          <div style="font-size: 9pt; margin-top: 2px; line-height: 1.1;">\${dataDesa.alamat_kantor_desa || ''}</div>
+          <div style="font-weight: bold; margin: 0; line-height: 1.2; font-size: 14pt;">PEMERINTAH KABUPATEN ${dataDesa.nama_kabupaten_kota?.toUpperCase() || ''}</div>
+          <div style="font-weight: bold; margin: 0; line-height: 1.2; font-size: 16pt;">KECAMATAN ${dataDesa.nama_kecamatan?.toUpperCase() || ''}</div>
+          <div style="font-weight: bold; margin: 0; line-height: 1.2; font-size: 18pt; margin-bottom: 2px;">PEMERINTAH DESA ${dataDesa.nama_desa?.toUpperCase() || ''}</div>
+          <div style="font-size: 9pt; margin-top: 2px; line-height: 1.1;">${dataDesa.alamat_kantor_desa || ''}</div>
           <div style="font-size: 9pt; margin-top: 2px; line-height: 1.1;">
-            \${dataDesa.nomor_telepon_kantor_desa ? \`<span>Telp: \${dataDesa.nomor_telepon_kantor_desa}</span>\` : ''}
-            \${dataDesa.email_desa ? \`<span style="margin-left: 10px;">Email: \${dataDesa.email_desa}</span>\` : ''}
+            ${dataDesa.nomor_telepon_kantor_desa ? `<span>Telp: ${dataDesa.nomor_telepon_kantor_desa}</span>` : ''}
+            ${dataDesa.email_desa ? `<span style="margin-left: 10px;">Email: ${dataDesa.email_desa}</span>` : ''}
           </div>
         </div>
       </div>
-    \`;
+    `;
   }
 
   const printWindow = window.open('', '_blank');
   if (printWindow) {
-    printWindow.document.write(\`
+    printWindow.document.write(`
       <html>
         <head>
-          <title>\${title} - Cetak</title>
+          <title>${title} - Cetak</title>
           <style>
             @media print {
               @page {
-                size: \${paperSize} portrait;
+                size: ${paperSize} portrait;
                 margin: 0.75in; /* Standard margin for letters */
               }
               body {
@@ -319,26 +318,12 @@ export const printHtmlDocument = (
             .kop-level-kecamatan { font-size: 16pt; }
             .kop-level-desa { font-size: 18pt; margin-bottom: 2px; }
             .kop-alamat, .kop-kontak { font-size: 9pt; margin-top: 2px; line-height: 1.1; }
-
-             /* Styles from SuratMakerView that might be in htmlBodyContent */
-            .letter-container { padding: 0.5in; max-width: 210mm; margin: auto; } /* Used in preview, not directly here */
-            p { margin: 0 0 1em 0; text-align: justify; }
-            .align-right { text-align: right; }
-            .no-margin { margin:0; }
-            .signature-section { margin-top: 40px; }
-            .signature-section table { width: 100%; border-collapse: collapse; }
-            .signature-section td { vertical-align: top; text-align: center; padding: 5px; }
-            .tembusan { font-size: 10pt; margin-top: 30px; }
-            .tembusan ul, .tembusan ol { list-style-type: decimal; padding-left: 20px; margin:0; }
-            .kepada-yth { margin-bottom: 20px; }
-            .isi-surat { margin-left: 50px; }
-
           </style>
         </head>
         <body>
           <div class="letter-content">
-            \${kopSuratHtml}
-            \${htmlBodyContent}
+            ${kopSuratHtml}
+            ${htmlBodyContent}
           </div>
           <script>
             setTimeout(() => {
@@ -348,7 +333,7 @@ export const printHtmlDocument = (
           </script>
         </body>
       </html>
-    \`);
+    `);
     printWindow.document.close();
   } else {
     alert('Gagal membuka jendela cetak. Pastikan pop-up blocker tidak aktif.');

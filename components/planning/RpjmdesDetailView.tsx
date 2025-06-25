@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { BukuRpjmdes, BukuRkp, DataDesaEntry, BookDefinition, FieldDefinition, BukuAparat, GenericEntry } from '../../types';
 import { DataTable } from '../DataTable';
-import { downloadDoc } from '../../utils/exportUtils'; 
+import { downloadDoc } from '../../exportUtils'; 
 
 interface RpjmdesDetailViewProps {
   rpjmdesData: BukuRpjmdes;

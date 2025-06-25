@@ -6,11 +6,12 @@ import { Sidebar } from './components/Sidebar';
 import { BookViewWrapper } from './components/BookViewWrapper';
 import { PlanningView } from './components/planning/PlanningView';
 import { DataDesaView } from './components/DataDesaView';
+import { SuratMakerView } from './components/SuratMakerView'; // Import new view
 import { Dashboard } from './components/Dashboard';
 import { LoginView } from './components/LoginView';
-import { ChangePasswordModal } from './components/ChangePasswordModal'; // Import modal
+import { ChangePasswordModal } from './components/ChangePasswordModal';
 import { MENU_ITEMS, BOOK_CATEGORIES, PLANNING_ICON, DATA_DESA_FIELDS, DEFAULT_PASSWORD, CUSTOM_PASSWORD_STORAGE_KEY } from './constants';
-import { AllDataBooks, BookDefinition, GenericEntry, FieldDefinition, DataDesaEntry, DATA_DESA_KEY, USAGE_GUIDE_KEY } from './types';
+import { AllDataBooks, BookDefinition, GenericEntry, FieldDefinition, DataDesaEntry, DATA_DESA_KEY, USAGE_GUIDE_KEY, PEMBUAT_SURAT_KEY } from './types';
 import { 
   initializeDatabase, 
   loadAllDataFromDb, 
@@ -47,13 +48,13 @@ const App: React.FC = () => {
   const [isAccessBlocked, setIsAccessBlocked] = useState<boolean>(false); 
 
   const [selectedBookKey, setSelectedBookKey] = useState<string | null>(null);
-  const [currentView, setCurrentView] = useState<'dashboard' | 'book' | 'planning' | 'data_desa' | 'usage_guide'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'book' | 'planning' | 'data_desa' | 'usage_guide' | 'surat_maker'>('dashboard');
   
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [changePasswordError, setChangePasswordError] = useState<string | null>(null);
   const [changePasswordSuccess, setChangePasswordSuccess] = useState<string | null>(null);
 
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false); // State for mobile sidebar
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false); 
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -125,6 +126,12 @@ const App: React.FC = () => {
         if (pathname !== '/' || search !== '' || routeHash !== `#/${USAGE_GUIDE_KEY}`) {
             navigate(`/#/${USAGE_GUIDE_KEY}`, { replace: true });
         }
+    } else if (cleanHash === PEMBUAT_SURAT_KEY) {
+        setCurrentView('surat_maker');
+        setSelectedBookKey(PEMBUAT_SURAT_KEY);
+        if (pathname !== '/' || search !== '' || routeHash !== `#/${PEMBUAT_SURAT_KEY}`) {
+            navigate(`/#/${PEMBUAT_SURAT_KEY}`, { replace: true });
+        }
     } else if (cleanHash && MENU_ITEMS.some(item => item.key === cleanHash)) {
       setCurrentView('book');
       setSelectedBookKey(cleanHash);
@@ -166,7 +173,7 @@ const App: React.FC = () => {
     setChangePasswordError(null);
     setChangePasswordSuccess(null);
     setIsAccessBlocked(false); 
-    setIsMobileSidebarOpen(false); // Close mobile sidebar on logout
+    setIsMobileSidebarOpen(false); 
     navigate('/'); 
   };
 
@@ -216,9 +223,9 @@ const App: React.FC = () => {
   };
 
 
-  const handleSelectNavigation = useCallback((viewType: 'book' | 'planning' | 'dashboard' | 'data_desa' | 'usage_guide', key?: string) => {
+  const handleSelectNavigation = useCallback((viewType: 'book' | 'planning' | 'dashboard' | 'data_desa' | 'usage_guide' | 'surat_maker', key?: string) => {
     if (!isAuthenticated || isAccessBlocked) return; 
-    setIsMobileSidebarOpen(false); // Close mobile sidebar on navigation
+    setIsMobileSidebarOpen(false); 
 
     if (viewType === 'planning') {
       navigate('/planning');
@@ -226,6 +233,8 @@ const App: React.FC = () => {
       navigate(`/#/${DATA_DESA_KEY}`);
     } else if (viewType === 'usage_guide' && key === USAGE_GUIDE_KEY) {
         navigate(`/#/${USAGE_GUIDE_KEY}`);
+    } else if (viewType === 'surat_maker' && key === PEMBUAT_SURAT_KEY) {
+        navigate(`/#/${PEMBUAT_SURAT_KEY}`);
     } else if (viewType === 'book' && key) {
       navigate(`/#/${key}`);
     } else {
@@ -408,7 +417,7 @@ const App: React.FC = () => {
         
         setCurrentView('dashboard');
         setSelectedBookKey(null);
-        setIsMobileSidebarOpen(false); // Close mobile sidebar after restore
+        setIsMobileSidebarOpen(false); 
         navigate('/', { replace: true });
 
       } catch (error) {
@@ -425,7 +434,7 @@ const App: React.FC = () => {
     reader.readAsArrayBuffer(file);
   };
   
-  const selectedBookDefinition = (currentView === 'book' || currentView === 'data_desa' || currentView === 'usage_guide') && selectedBookKey
+  const selectedBookDefinition = (currentView === 'book' || currentView === 'data_desa' || currentView === 'usage_guide' || currentView === 'surat_maker') && selectedBookKey
     ? getBookDefinition(selectedBookKey)
     : null;
 
@@ -516,6 +525,7 @@ const App: React.FC = () => {
                         <li><strong>Perencanaan Desa:</strong> Fitur terpadu untuk mengelola dokumen RPJMDes, RKPDes, dan APBDes secara berjenjang.</li>
                         <li><strong>Data Umum Desa:</strong> (Terdapat di bawah kategori "Administrasi Umum") Digunakan untuk mengisi dan mengelola informasi dasar mengenai desa Anda yang akan digunakan pada kop surat dan laporan. Menyimpan data di sini untuk pertama kali akan mengaktifkan lisensi aplikasi untuk instalasi ini.</li>
                         <li><strong>Petunjuk Penggunaan:</strong> Halaman ini yang sedang Anda baca.</li>
+                         <li><strong>Pembuat Surat:</strong> (Di menu "Pembuat Surat") Untuk membuat berbagai jenis surat resmi desa seperti Surat Undangan, Surat Pemberitahuan, dan Surat Keterangan.</li>
                         <li>Setiap <strong>buku administrasi</strong> (misalnya, Buku Peraturan Desa, Buku Induk Penduduk) memiliki halaman tersendiri untuk melihat, menambah, mengedit, dan menghapus data.</li>
                     </ul>
 
@@ -532,6 +542,7 @@ const App: React.FC = () => {
                      <ul className="list-disc pl-5 space-y-1">
                         <li>Setiap halaman buku (dan bagian pada Perencanaan Desa) menyediakan tombol "Cetak" untuk mencetak tabel data.</li>
                         <li>Tombol "Export XLS" tersedia untuk mengunduh data dalam format file Excel (.xlsx).</li>
+                        <li><strong>Pembuat Surat:</strong> Fitur ini memungkinkan Anda mencetak surat resmi (Undangan, Pemberitahuan, Keterangan) atau mengunduhnya sebagai file Word (.doc), lengkap dengan kop surat otomatis.</li>
                         <li><strong>Kop Surat Otomatis:</strong> Pastikan Anda telah mengisi "Data Umum Desa" dengan lengkap. Informasi seperti nama desa, kabupaten, kecamatan, alamat, dan logo (jika URL gambar logo diisi) akan digunakan secara otomatis pada kop surat saat mencetak dokumen.</li>
                     </ul>
                     
@@ -570,10 +581,15 @@ const App: React.FC = () => {
                 </div>
             </div>
         );
+      case 'surat_maker':
+        return (
+            <SuratMakerView dataDesa={dataDesa} allData={allData} />
+        );
       case 'book':
         if (selectedBookDefinition && selectedBookKey && 
             selectedBookKey !== DATA_DESA_KEY && 
-            selectedBookKey !== USAGE_GUIDE_KEY) {
+            selectedBookKey !== USAGE_GUIDE_KEY &&
+            selectedBookKey !== PEMBUAT_SURAT_KEY) {
           return (
             <BookViewWrapper
               bookDefinition={selectedBookDefinition}
@@ -595,7 +611,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 antialiased overflow-hidden"> {/* Added overflow-hidden to body */}
+    <div className="flex h-screen bg-gray-100 antialiased overflow-hidden"> 
       <Sidebar
         menuItems={MENU_ITEMS}
         categories={BOOK_CATEGORIES}
@@ -609,8 +625,8 @@ const App: React.FC = () => {
         isMobileSidebarOpen={isMobileSidebarOpen}
         onCloseMobileSidebar={toggleMobileSidebar}
       />
-      <div className="flex-1 flex flex-col overflow-hidden"> {/* Main content wrapper */}
-        {/* Mobile Header with Hamburger */}
+      <div className="flex-1 flex flex-col overflow-hidden"> 
+        
         <header className="md:hidden bg-white shadow-sm p-3 sticky top-0 z-30">
           <div className="flex items-center justify-between">
             <button
@@ -623,10 +639,11 @@ const App: React.FC = () => {
             <h1 className="text-lg font-semibold text-sky-600">
               { selectedBookDefinition?.label || 
                 (currentView === 'planning' ? 'Perencanaan Desa' : 
-                (currentView === 'dashboard' ? 'Dashboard' : 'Digital Desa')) 
+                (currentView === 'surat_maker' ? 'Pembuat Surat' : 
+                (currentView === 'dashboard' ? 'Dashboard' : 'Digital Desa'))) 
               }
             </h1>
-            <div className="w-7"></div> {/* Spacer for balance */}
+            <div className="w-7"></div> 
           </div>
         </header>
 

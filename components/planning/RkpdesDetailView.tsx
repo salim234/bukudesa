@@ -1,7 +1,7 @@
 import React from 'react';
 import { BukuRkp, BukuApbdes, BukuRpjmdes, DataDesaEntry, BookDefinition, FieldDefinition } from '../../types';
 import { DataTable } from '../DataTable';
-import { downloadDoc } from '../../utils/exportUtils'; 
+import { downloadDoc } from '../../exportUtils'; 
 
 interface RkpdesDetailViewProps {
   rkpdesData: BukuRkp;

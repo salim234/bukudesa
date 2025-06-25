@@ -1,20 +1,20 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { BookDefinition, DATA_DESA_KEY, USAGE_GUIDE_KEY } from '../types';
+import { BookDefinition, DATA_DESA_KEY, USAGE_GUIDE_KEY, PEMBUAT_SURAT_KEY } from '../types';
 import { BOOK_CATEGORIES, LogoutIcon, ArrowDownTrayIcon, ArrowUpTrayIcon, KeyIcon } from '../constants';
 
 interface SidebarProps {
   menuItems: BookDefinition[];
   categories: Record<string, string>;
   selectedKey: string | null;
-  onSelectNavigation: (viewType: 'book' | 'planning' | 'dashboard' | 'data_desa' | 'usage_guide', key?: string) => void;
+  onSelectNavigation: (viewType: 'book' | 'planning' | 'dashboard' | 'data_desa' | 'usage_guide' | 'surat_maker', key?: string) => void;
   planningIcon: React.ReactElement<React.SVGProps<SVGSVGElement>>;
   onLogout: () => void;
   onBackupDatabase: () => void;
   onRestoreDatabase: (file: File) => void;
   onChangePassword: () => void;
-  isMobileSidebarOpen: boolean; // New prop
-  onCloseMobileSidebar: () => void; // New prop
+  isMobileSidebarOpen: boolean; 
+  onCloseMobileSidebar: () => void; 
 }
 
 const ChevronIcon: React.FC<{ isOpen: boolean, className?: string }> = ({ isOpen, className }) => (
@@ -51,6 +51,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
     if (selectedKey) { 
       if (selectedKey === 'planning') {
         categoryToOpen = categories[BOOK_CATEGORIES.PERENCANAAN_DESA];
+      } else if (selectedKey === PEMBUAT_SURAT_KEY) {
+        categoryToOpen = categories[BOOK_CATEGORIES.PEMBUAT_SURAT];
       } else {
         const currentBook = menuItems.find(item => item.key === selectedKey);
         if (currentBook) {
@@ -62,20 +64,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
     if (categoryToOpen && !openCategories[categoryToOpen]) {
        setOpenCategories(prevOpen => {
         const newState = {...prevOpen};
-        // Open all parent categories up to the root for the selected item
         Object.keys(categories).forEach(catKey => {
             if (categories[catKey] === categoryToOpen) {
                  newState[categories[catKey]] = true;
             }
         });
-        // If a specific book is selected, ensure its direct category is open
         if (selectedKey !== 'planning' && categoryToOpen) {
              newState[categoryToOpen] = true;
         }
         return newState;
        });
     }
-  }, [selectedKey, menuItems, categories]); // Removed openCategories from deps to prevent re-toggling
+  }, [selectedKey, menuItems, categories]); 
 
   const toggleCategory = (categoryName: string) => {
     setOpenCategories(prev => ({
@@ -84,7 +84,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }));
   };
 
-  const handleNavigationAndCloseMobile = (viewType: 'book' | 'planning' | 'dashboard' | 'data_desa' | 'usage_guide', key?: string) => {
+  const handleNavigationAndCloseMobile = (viewType: 'book' | 'planning' | 'dashboard' | 'data_desa' | 'usage_guide' | 'surat_maker', key?: string) => {
     onSelectNavigation(viewType, key);
     if (isMobileSidebarOpen) {
       onCloseMobileSidebar();
@@ -92,12 +92,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const actualGroupedMenuItems = Object.entries(categories)
-    .filter(([key]) => key !== BOOK_CATEGORIES.PERENCANAAN_DESA) 
+    .filter(([key]) => key !== BOOK_CATEGORIES.PERENCANAAN_DESA && key !== BOOK_CATEGORIES.PEMBUAT_SURAT) 
     .map(([categoryKey, categoryName]) => ({
       key: categoryKey, 
       name: categoryName,
       items: menuItems.filter(item => item.category === categoryName),
     }));
+  
+  const suratMakerMenuItem = menuItems.find(item => item.key === PEMBUAT_SURAT_KEY);
 
   const handleRestoreClick = () => {
     fileInputRef.current?.click();
@@ -112,7 +114,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         fileInputRef.current.value = '';
       }
     }
-    // No need to close mobile sidebar here as it's handled by handleRestoreClick
   };
   
   const handleUtilityAction = (action: () => void) => {
@@ -124,7 +125,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <>
-      {/* Overlay for mobile */}
       {isMobileSidebarOpen && (
         <div 
           className="fixed inset-0 z-30 bg-black bg-opacity-50 md:hidden" 
@@ -166,6 +166,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <span className="flex-grow">{categories[BOOK_CATEGORIES.PERENCANAAN_DESA] || "Perencanaan Desa"}</span>
             </button>
           </div>
+
+          {/* Surat Maker Menu Item */}
+          {suratMakerMenuItem && (
+             <div>
+                <button
+                onClick={() => handleNavigationAndCloseMobile('surat_maker', PEMBUAT_SURAT_KEY)}
+                className={`group w-full flex items-center text-left px-3 py-2.5 rounded-md text-sm font-medium transition-colors duration-150 ease-in-out
+                            ${selectedKey === PEMBUAT_SURAT_KEY
+                    ? 'bg-sky-100 text-sky-700 font-semibold'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                    }
+                            focus:outline-none focus:ring-2 focus:ring-sky-500/50`}
+                aria-current={selectedKey === PEMBUAT_SURAT_KEY ? 'page' : undefined}
+                >
+                {suratMakerMenuItem.icon && React.cloneElement(suratMakerMenuItem.icon, { className: `w-5 h-5 mr-3 flex-shrink-0 ${selectedKey === PEMBUAT_SURAT_KEY ? 'text-sky-600' : 'text-gray-500 group-hover:text-sky-600'}` })}
+                <span className="flex-grow">{suratMakerMenuItem.label}</span>
+                </button>
+            </div>
+          )}
+
 
           {/* Other Book Categories */}
           {actualGroupedMenuItems.map((group) => (
@@ -234,7 +254,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               aria-hidden="true"
             />
             <button
-              onClick={handleRestoreClick} // Special handler to close mobile sidebar first
+              onClick={handleRestoreClick} 
               className="group w-full flex items-center text-left px-3 py-2.5 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-sky-500/50"
               aria-label="Restore Database Aplikasi"
             >
@@ -261,7 +281,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Logout Button */}
         <div className="mt-auto pt-4 border-t border-gray-200">
           <button
-            onClick={onLogout} // Already handles mobile sidebar close in App.tsx
+            onClick={() => handleUtilityAction(onLogout)}
             className="group w-full flex items-center text-left px-3 py-2.5 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500/50"
             aria-label="Logout Aplikasi"
           >

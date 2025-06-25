@@ -26,7 +26,8 @@ export interface GenericEntry {
 
 // Data Desa
 export const DATA_DESA_KEY = 'data_desa_umum';
-export const USAGE_GUIDE_KEY = 'usage_guide'; // Added USAGE_GUIDE_KEY
+export const USAGE_GUIDE_KEY = 'usage_guide'; 
+export const PEMBUAT_SURAT_KEY = 'pembuat_surat'; // New Key for Surat Maker
 
 export interface DataDesaEntry extends GenericEntry { // id will be fixed to 1
   nama_desa?: string;
@@ -46,6 +47,73 @@ export interface DataDesaEntry extends GenericEntry { // id will be fixed to 1
   logo_desa_path?: string; // Path, URL, or base64 data URL to logo image file
   installation_id?: string; // Added for single-install mechanism
 }
+
+// Surat Maker Data Types
+export interface KlasifikasiSuratKeterangan {
+  kode: string; // e.g., "470/01"
+  label: string; // e.g., "Surat Keterangan Domisili"
+  deskripsiSingkat: string; // e.g., "Menerangkan domisili penduduk"
+}
+
+export interface SuratUndanganFormData {
+  nomor_surat: string;
+  lampiran?: string;
+  perihal: string;
+  tanggal_surat: string; // YYYY-MM-DD
+  kepada_yth: string; // Tujuan surat (multiline)
+  di_tempat: string; // "di - Tempat" or specific location
+  isi_pembuka: string; // e.g., Dengan hormat, mengharap kehadiran Bapak/Ibu/Saudara/i
+  isi_acara: string;
+  isi_tanggal_acara: string; // YYYY-MM-DD
+  isi_waktu_acara: string; // e.g., "09:00 WIB - Selesai"
+  isi_tempat_acara: string;
+  isi_penutup: string; // e.g., Demikian undangan ini kami sampaikan...
+  nama_penandatangan: string;
+  jabatan_penandatangan: string;
+  nama_tembusan?: string; // Tembusan (multiline)
+}
+
+export interface SuratPemberitahuanFormData {
+  nomor_surat: string;
+  lampiran?: string;
+  perihal: string;
+  tanggal_surat: string; // YYYY-MM-DD
+  kepada_yth: string; // Tujuan surat (multiline)
+  di_tempat: string;
+  isi_pembuka: string; // e.g., Dengan hormat, bersama ini kami sampaikan...
+  isi_pemberitahuan: string; // Main content (multiline)
+  isi_penutup: string; // e.g., Demikian pemberitahuan ini kami sampaikan...
+  nama_penandatangan: string;
+  jabatan_penandatangan: string;
+  nama_tembusan?: string; // Tembusan (multiline)
+}
+
+export interface SuratKeteranganFormData {
+  nomor_surat: string; // Format: [Kode Klasifikasi]/[Nomor Urut Input]/[Kode Desa Kemendagri]/[Tahun] - AUTO GENERATED
+  klasifikasi_surat_kode: string; // e.g., "470/01" - User selected
+  nomor_urut_input: string; // e.g., "001", "123" - User input for sequence
+  tanggal_surat: string; // YYYY-MM-DD
+  // Data Pemohon
+  nama_pemohon: string;
+  nik_pemohon: string;
+  tempat_lahir_pemohon: string;
+  tanggal_lahir_pemohon: string; // YYYY-MM-DD
+  jenis_kelamin_pemohon: string;
+  agama_pemohon: string;
+  status_perkawinan_pemohon: string;
+  pekerjaan_pemohon: string;
+  alamat_pemohon: string; // Textarea: RT/RW, Dusun, Desa (otomatis), Kec (otomatis), Kab (otomatis)
+  // Keperluan
+  keperluan: string; // Textarea for specific details, main purpose from klasifikasi
+  detail_keperluan_data?: Record<string, any>; // For structured specific details based on letter type
+  // Penandatangan
+  nama_penandatangan: string;
+  jabatan_penandatangan: string;
+}
+
+
+export type AnyLetterFormData = SuratUndanganFormData | SuratPemberitahuanFormData | SuratKeteranganFormData;
+export type LetterType = 'undangan' | 'pemberitahuan' | 'keterangan';
 
 
 // Administrasi Umum
@@ -366,6 +434,87 @@ export interface BukuRpjmdes extends GenericEntry {
   status_rpjmdes?: string; // 'Berlaku', 'Dalam Penyusunan', 'Revisi', 'Tidak Berlaku' - options to be updated
   catatan_revisi_rpjmdes?: string; // textarea (new)
   keterangan?: string;
+
+  // New fields for detailed RPJMDes Document structure
+  kata_pengantar_rpjmdes_narasi?: string; // textarea
+  // BAB I
+  bab1_latar_belakang_konteks_umum?: string; // textarea
+  bab1_maksud_tujuan_narasi?: string; // textarea
+  bab1_dasar_hukum_tambahan?: string; // textarea (specific local regulations)
+  bab1_tahapan_pembentukan_tim_narasi?: string; // textarea
+  bab1_tahapan_penyelarasan_arah_kebijakan_narasi?: string; // textarea
+  bab1_tahapan_mengkaji_sdgs_narasi?: string; // textarea
+  bab1_tahapan_mengkaji_rencana_program_narasi?: string; // textarea
+  bab1_tahapan_penyusunan_rancangan_narasi?: string; // textarea
+  bab1_tahapan_musrenbang_narasi?: string; // textarea
+  bab1_tahapan_musdes_penetapan_narasi?: string; // textarea
+  bab1_tahapan_sosialisasi_narasi?: string; // textarea
+  // BAB II
+  bab2_sejarah_desa_narasi?: string; // textarea
+  bab2_kondisi_geografis_narasi?: string; // textarea
+  bab2_demografi_narasi?: string; // textarea
+  bab2_kesehatan_narasi?: string; // textarea
+  bab2_pendidikan_narasi?: string; // textarea
+  bab2_mata_pencaharian_narasi?: string; // textarea
+  bab2_kesejahteraan_narasi?: string; // textarea
+  bab2_agama_narasi?: string; // textarea
+  bab2_budaya_narasi?: string; // textarea
+  bab2_ekonomi_desa_narasi?: string; // textarea
+  bab2_infrastruktur_desa_narasi?: string; // textarea
+  bab2_pembagian_wilayah_narasi?: string; // textarea
+  bab2_sotk_desa_narasi?: string; // textarea
+  bab2_lembaga_bpd_narasi?: string; // textarea
+  // BAB III
+  bab3_visi_narasi?: string; // textarea
+  bab3_misi_narasi?: string; // textarea
+  bab3_nilai_nilai_narasi?: string; // textarea
+  // BAB IV
+  bab4_masalah_analisis?: string; // textarea
+  bab4_potensi_analisis?: string; // textarea
+  // BAB V
+  bab5_arah_kebijakan_pembangunan_narasi?: string; // textarea
+  bab5_arah_kebijakan_keuangan_narasi?: string; // textarea
+  // BAB VI
+  bab6_program_kegiatan_narasi_umum?: string; // textarea
+  bab6_bidang_pemerintahan_narasi?: string; // textarea
+  bab6_bidang_pembangunan_narasi?: string; // textarea
+  bab6_bidang_pembinaan_narasi?: string; // textarea
+  bab6_bidang_pemberdayaan_narasi?: string; // textarea
+  bab6_bidang_bencana_narasi?: string; // textarea
+  // BAB VII
+  bab7_kesimpulan_narasi?: string; // textarea
+  bab7_saran_narasi?: string; // textarea
+  bab7_saran_tambahan_1?: string; // textarea
+  bab7_saran_tambahan_2?: string; // textarea
+  // Lampiran Checklist / Descriptions
+  lampiran_sk_tim_penyusun?: string; // select: Ya/Tidak/NamaFile
+  lampiran_rktl_tim_penyusun?: string;
+  lampiran_peta_jalan_sdgs?: string;
+  lampiran_data_rencana_program_kegiatan_masuk?: string;
+  lampiran_gambar_bagan_kelembagaan?: string;
+  lampiran_daftar_masalah_potensi_bagan_kelembagaan?: string;
+  lampiran_gambar_peta_sosial_desa?: string;
+  lampiran_daftar_masalah_potensi_sketsa_desa?: string;
+  lampiran_gambar_kalender_musim?: string;
+  lampiran_daftar_masalah_potensi_kalender_musim?: string;
+  lampiran_gambar_pohon_masalah?: string;
+  lampiran_daftar_masalah_potensi_pohon_masalah?: string;
+  lampiran_daftar_inventarisir_masalah?: string;
+  lampiran_daftar_inventarisir_potensi?: string;
+  lampiran_pengkajian_tindakan_pemecahan_masalah?: string;
+  lampiran_penentuan_tindakan_masalah?: string;
+  lampiran_penentuan_peringkat_tindakan?: string;
+  lampiran_daftar_gagasan_dusun_kelompok?: string;
+  lampiran_rekapitulasi_gagasan_dusun_kelompok?: string;
+  lampiran_rancangan_rpjm_desa?: string;
+  lampiran_dokumen_visi_misi_kepala_desa?: string;
+  lampiran_dokumen_pokok_pikiran_bpd?: string;
+  lampiran_keputusan_tim_penyusun_dll?: string;
+  lampiran_berita_acara_musyawarah?: string;
+  lampiran_undangan_daftar_hadir_musyawarah?: string;
+  lampiran_notulen_musyawarah?: string;
+  lampiran_peta_desa?: string;
+  lampiran_foto_kegiatan_desa?: string;
 }
 
 

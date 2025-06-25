@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx'; // Import xlsx
 import { BookDefinition, GenericEntry, FieldDefinition, DataDesaEntry, BukuIndukPenduduk } from '../types';
 import { DataTable } from './DataTable';
 import { DataForm } from './DataForm';
-import { printTable, exportToXLSX } from '../utils/exportUtils';
+import { printTable, exportToXLSX } from '../exportUtils';
 
 interface BookViewWrapperProps {
   bookDefinition: BookDefinition;
