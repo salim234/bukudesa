@@ -49,7 +49,7 @@ const Maintenance: React.FC = () => {
         opacity: 0.9
       }}>
         Untuk mendapatkan akses Aplikasi <strong>Digital Desa</strong>,
-        silakan hubungi pengembang melalui WhatsApp.
+        silakan hubungi pengembang melalui WhatsApp 082141097776.
       </p>
 
       <a
