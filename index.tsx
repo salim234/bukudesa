@@ -1,40 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom/client';
-// import App from './App';
-// import { HashRouter } from 'react-router-dom';
-
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
-}
-
-const root = ReactDOM.createRoot(rootElement);
-
-const Countdown: React.FC<{ targetTime: Date }> = ({ targetTime }) => {
-  const [timeLeft, setTimeLeft] = useState<number>(targetTime.getTime() - Date.now());
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimeLeft(targetTime.getTime() - Date.now());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [targetTime]);
-
-  if (timeLeft <= 0) return <p style={{ fontSize: '1.2rem' }}>Situs sudah dapat diakses kembali.</p>;
-
-  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-  return (
-    <p style={{ fontSize: '1.2rem', marginTop: '1rem' }}>
-      Kembali online dalam: {minutes} menit {seconds} detik
-    </p>
-  );
-};
-
 const Maintenance: React.FC = () => {
-  const reopenTime = new Date(Date.now() + 30 * 60 * 1000); // ⏱️ 30 menit dari sekarang
-
   return (
     <div style={{
       display: 'flex',
@@ -53,22 +17,23 @@ const Maintenance: React.FC = () => {
         alt="Logo Pasuruan"
         style={{ width: '80px', marginBottom: '1rem', borderRadius: '10px' }}
       />
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', animation: 'fadeIn 1s ease-out' }}>
-        🚧 Situs Dalam Pemeliharaan
-      </h1>
-      <p style={{ fontSize: '1.1rem', maxWidth: '500px' }}>
-        Kami sedang melakukan peningkatan sistem layanan <strong>Buku Saku Perangkat Desa</strong>.
-        Terima kasih atas kesabaran Anda 🙏.
-      </p>
 
-      <Countdown targetTime={reopenTime} />
+      <h1 style={{ fontSize: '2.2rem', marginBottom: '0.5rem', animation: 'fadeIn 1s ease-out' }}>
+        🚧 Aplikasi Dinonaktifkan Sementara
+      </h1>
+
+      <hr style={{ width: '60px', border: '1px solid #ccc', marginBottom: '1rem' }} />
+
+      <p style={{ fontSize: '1.1rem', maxWidth: '500px', marginBottom: '1.5rem' }}>
+        Aplikasi <strong>Digital Desa</strong> saat ini sedang <strong>dinonaktifkan</strong> oleh pengelola.
+        Jika Anda membutuhkan bantuan, silakan hubungi pengembang atau admin melalui WhatsApp di bawah ini.
+      </p>
 
       <a
         href="https://wa.me/6282141097776"
         target="_blank"
         rel="noopener noreferrer"
         style={{
-          marginTop: '2rem',
           padding: '10px 20px',
           backgroundColor: '#25D366',
           color: '#fff',
@@ -86,24 +51,11 @@ const Maintenance: React.FC = () => {
           from { opacity: 0; transform: translateY(-10px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @media (max-width: 480px) {
+          h1 { font-size: 1.8rem; }
+          p { font-size: 1rem; }
+        }
       `}</style>
     </div>
   );
 };
-
-root.render(
-  <React.StrictMode>
-    <Maintenance />
-  </React.StrictMode>
-);
-
-/*
-// Kode asli aplikasi Anda (nonaktifkan sementara)
-root.render(
-  <React.StrictMode>
-    <HashRouter>
-      <App />
-    </HashRouter>
-  </React.StrictMode>
-);
-*/
