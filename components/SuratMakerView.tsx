@@ -33,7 +33,7 @@ const initialUndanganFormData: SuratUndanganFormData = {
   isi_tanggal_acara: '',
   isi_waktu_acara: '',
   isi_tempat_acara: '',
-  isi_penutup: 'Demikian undangan ini kami sampaikan, atas perhatian dan kehadirannya diucapkan terima kasih.',
+  isi_penutup: 'Demikian undangan ini kami sampaikan. Besar harapan kami atas kehadiran Bapak/Ibu/Saudara/i tepat pada waktunya. Atas perhatian dan kerjasamanya, kami ucapkan terima kasih.',
   nama_penandatangan: '',
   jabatan_penandatangan: '',
   nama_tembusan: '',
@@ -48,7 +48,7 @@ const initialPemberitahuanFormData: SuratPemberitahuanFormData = {
   di_tempat: 'Tempat',
   isi_pembuka: 'Dengan hormat,\\nBersama ini kami sampaikan pemberitahuan sebagai berikut:',
   isi_pemberitahuan: '',
-  isi_penutup: 'Demikian pemberitahuan ini kami sampaikan, atas perhatiannya diucapkan terima kasih.',
+  isi_penutup: 'Demikian pemberitahuan ini kami sampaikan untuk menjadi maklum dan atas perhatiannya diucapkan terima kasih.',
   nama_penandatangan: '',
   jabatan_penandatangan: '',
   nama_tembusan: '',
@@ -261,43 +261,57 @@ export const SuratMakerView: React.FC<SuratMakerViewProps> = ({ dataDesa, allDat
                     <tr><td style="vertical-align:top; padding: 1px 0;">Alamat</td><td style="vertical-align:top; padding: 1px 0;">:</td><td style="vertical-align:top; padding: 1px 0;">${fd.alamat_pemohon || '...........'}</td></tr>
                  </table>`;
         
-        body += `<p style="text-indent: 50px; margin-top:15px; margin-bottom: 15px; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; text-align:justify;">
+        body += `<p style="text-indent: 50px; margin-top:15px; margin-bottom: 10px; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; text-align:justify;">
                     Bahwa nama tersebut di atas adalah benar penduduk Desa ${namaDesaFormatted}, Kecamatan ${namaKecamatanFormatted}, Kabupaten ${namaKabupatenFormatted}.
                  </p>`;
+        
+        body += `<p style="text-indent: 50px; margin-top:10px; margin-bottom: 10px; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; text-align:justify;">
+                    Selanjutnya, berdasarkan data yang ada pada kami dan/atau sepengetahuan kami, dengan ini diterangkan hal-hal sebagai berikut:
+                 </p>`;
+
+        const narasiKeperluan = fd.keperluan ? fd.keperluan : (selectedKlasifikasi?.deskripsiSingkat || 'Keperluan Tertentu');
+        
+        body += `<div style="margin-left: 50px; margin-right: 20px; margin-top:5px; margin-bottom: 15px; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; text-align:justify;">
+                    ${narasiKeperluan.split('\n').map(line => `<p style="margin-bottom: 0.5em; text-indent: 0;">${line || '&nbsp;'}</p>`).join('')}
+                 </div>`;
 
         let detailNarasi = '';
         if (fd.klasifikasi_surat_kode === "511/01") { // SKU
-            detailNarasi = `Yang bersangkutan benar memiliki usaha sebagai berikut:
-                            <table style="width: 90%; margin-left: 50px; border-collapse:collapse; margin-top:5px; margin-bottom:5px; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5;">
+            detailNarasi = `Adapun detail usaha yang bersangkutan adalah sebagai berikut:
+                            <table style="width: 90%; margin-left: 0px; border-collapse:collapse; margin-top:5px; margin-bottom:5px; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5;">
                                 <tr><td style="width: 30%; vertical-align:top; padding: 1px 0;">Nama Usaha</td><td style="width:5%; vertical-align:top; padding: 1px 0;">:</td><td style="vertical-align:top; padding: 1px 0;">${details.nama_usaha || '...........'}</td></tr>
                                 <tr><td style="vertical-align:top; padding: 1px 0;">Jenis Usaha</td><td style="vertical-align:top; padding: 1px 0;">:</td><td style="vertical-align:top; padding: 1px 0;">${details.jenis_usaha || '...........'}</td></tr>
                                 <tr><td style="vertical-align:top; padding: 1px 0;">Alamat Usaha</td><td style="vertical-align:top; padding: 1px 0;">:</td><td style="vertical-align:top; padding: 1px 0;">${details.alamat_usaha || '...........'}</td></tr>
                                 <tr><td style="vertical-align:top; padding: 1px 0;">Dimulai Sejak</td><td style="vertical-align:top; padding: 1px 0;">:</td><td style="vertical-align:top; padding: 1px 0;">${details.dimulai_sejak ? (details.dimulai_sejak.includes('-') ? formatDate(details.dimulai_sejak) : details.dimulai_sejak) : '...........'}</td></tr>
                             </table>`;
         } else if (fd.klasifikasi_surat_kode === "470/01") { // Domisili
-            detailNarasi = `Yang bersangkutan benar berdomisili di alamat tersebut di atas${details.sejak_tanggal_domisili ? ` sejak tanggal ${formatDate(details.sejak_tanggal_domisili)}` : ''}.`;
+             if (details.sejak_tanggal_domisili) {
+                detailNarasi = `Yang bersangkutan telah berdomisili di alamat tersebut sejak tanggal ${formatDate(details.sejak_tanggal_domisili)}.`;
+             }
         } else if (fd.klasifikasi_surat_kode === "430/02") { // Kehilangan
-             detailNarasi = `Menurut pengakuan yang bersangkutan, telah kehilangan barang berupa: <br/><i>${(details.barang_hilang || '...........').replace(/\n/g, '<br/>- ')}</i> <br/>
+             detailNarasi = `Menurut pengakuan yang bersangkutan, telah kehilangan barang berupa: <br/>
+                            <ul style="margin-top:0; padding-left: 1.5em;">
+                                ${(details.barang_hilang || '...........').split('\n').map((item: string) => `<li>${item.trim()}</li>`).join('')}
+                            </ul>
                             Diperkirakan hilang di sekitar ${details.lokasi_perkiraan_hilang || '...........'} pada ${details.waktu_perkiraan_hilang || '...........'}.`;
         } else if (fd.klasifikasi_surat_kode === "472/01") { // Pengantar Nikah
-             detailNarasi = `Akan melangsungkan pernikahan dengan seorang ${details.jenis_kelamin_calon_pasangan === 'Laki-laki' ? 'pria' : 'wanita'} bernama:
-                            <table style="width: 90%; margin-left: 50px; border-collapse:collapse; margin-top:5px; margin-bottom:5px; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5;">
-                                <tr><td style="width: 30%; vertical-align:top; padding: 1px 0;">Nama Calon</td><td style="width:5%; vertical-align:top; padding: 1px 0;">:</td><td style="vertical-align:top; padding: 1px 0;">${details.nama_calon_pasangan || '...........'}</td></tr>
-                                <tr><td style="vertical-align:top; padding: 1px 0;">NIK Calon</td><td style="vertical-align:top; padding: 1px 0;">:</td><td style="vertical-align:top; padding: 1px 0;">${details.nik_calon_pasangan || '...........'}</td></tr>
+             detailNarasi = `Akan melangsungkan pernikahan dengan seorang ${details.jenis_kelamin_calon_pasangan === 'Laki-laki' ? 'pria' : 'wanita'} dengan data sebagai berikut:
+                            <table style="width: 90%; margin-left: 0px; border-collapse:collapse; margin-top:5px; margin-bottom:5px; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5;">
+                                <tr><td style="width: 30%; vertical-align:top; padding: 1px 0;">Nama Calon Pasangan</td><td style="width:5%; vertical-align:top; padding: 1px 0;">:</td><td style="vertical-align:top; padding: 1px 0;">${details.nama_calon_pasangan || '...........'}</td></tr>
+                                <tr><td style="vertical-align:top; padding: 1px 0;">NIK Calon Pasangan</td><td style="vertical-align:top; padding: 1px 0;">:</td><td style="vertical-align:top; padding: 1px 0;">${details.nik_calon_pasangan || '...........'}</td></tr>
                                 <tr><td style="vertical-align:top; padding: 1px 0;">Tempat/Tgl Lahir Calon</td><td style="vertical-align:top; padding: 1px 0;">:</td><td style="vertical-align:top; padding: 1px 0;">${details.tempat_lahir_calon_pasangan || '...........'}, ${formatDate(details.tanggal_lahir_calon_pasangan)}</td></tr>
-                                <tr><td style="vertical-align:top; padding: 1px 0;">Alamat Calon</td><td style="vertical-align:top; padding: 1px 0;">:</td><td style="vertical-align:top; padding: 1px 0;">${details.alamat_calon_pasangan || '...........'}</td></tr>
+                                <tr><td style="vertical-align:top; padding: 1px 0;">Alamat Calon Pasangan</td><td style="vertical-align:top; padding: 1px 0;">:</td><td style="vertical-align:top; padding: 1px 0;">${details.alamat_calon_pasangan || '...........'}</td></tr>
                             </table>`;
         }
 
-
-        const narasiKeperluan = fd.keperluan ? fd.keperluan.split('\n').map(l => l.trim()).join('<br/>') : (selectedKlasifikasi?.deskripsiSingkat || 'Keperluan Tertentu');
+        if (detailNarasi) {
+            body += `<div style="margin-left: 50px; margin-right: 20px; margin-top:5px; margin-bottom: 15px; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; text-align:justify;">
+                        ${detailNarasi}
+                     </div>`;
+        }
         
-        body += `<p style="text-indent: 50px; margin-top:15px; margin-bottom: 15px; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; text-align:justify;">
-                    ${detailNarasi ? `${detailNarasi}<br/>` : ''}
-                    Surat keterangan ini dibuat untuk keperluan: <strong>${narasiKeperluan}</strong>.
-                 </p>`;
         body += `<p style="text-indent: 50px; margin-top:15px; margin-bottom: 20px; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; text-align:justify;">
-                    Demikian surat keterangan ini dibuat untuk dapat dipergunakan sebagaimana mestinya.
+                    Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan sebagaimana mestinya. Apabila di kemudian hari terdapat kekeliruan dalam surat keterangan ini, akan diadakan perbaikan sebagaimana mestinya.
                  </p>`;
 
     } else { // Undangan or Pemberitahuan (Existing logic)
@@ -760,7 +774,7 @@ export const SuratMakerView: React.FC<SuratMakerViewProps> = ({ dataDesa, allDat
                         Narasi untuk menjelaskan tujuan/isi surat keterangan <span className="text-red-500">*</span>
                     </label>
                     <textarea name="keperluan" id="keperluan" value={fd.keperluan} onChange={handleChange} rows={3} required className="mt-1 block w-full input-textarea-field" placeholder="Contoh: Sebagai lampiran untuk pengajuan beasiswa Program Indonesia Pintar. Bahwa yang bersangkutan berkelakuan baik dan belum pernah tersangkut perkara pidana."></textarea>
-                    <p className="mt-1 text-xs text-gray-500">Jelaskan secara singkat dan jelas inti dari keterangan yang diberikan.</p>
+                    <p className="mt-1 text-xs text-gray-500">Jelaskan secara detail mengenai keterangan yang diberikan tentang pemohon.</p>
                 </div>
                 {commonFieldsPart3Penandatangan}
             </>
