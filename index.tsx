@@ -1,3 +1,15 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+// import App from './App';
+// import { HashRouter } from 'react-router-dom';
+
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error("Could not find root element to mount to");
+}
+
+const root = ReactDOM.createRoot(rootElement);
+
 const Maintenance: React.FC = () => {
   return (
     <div style={{
@@ -17,16 +29,11 @@ const Maintenance: React.FC = () => {
         alt="Logo Pasuruan"
         style={{ width: '80px', marginBottom: '1rem', borderRadius: '10px' }}
       />
-
-      <h1 style={{ fontSize: '2.2rem', marginBottom: '0.5rem', animation: 'fadeIn 1s ease-out' }}>
-        🚧 Aplikasi Dinonaktifkan Sementara
+      <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', animation: 'fadeIn 1s ease-out' }}>
+        🚧 Situs dinonaktifkan
       </h1>
-
-      <hr style={{ width: '60px', border: '1px solid #ccc', marginBottom: '1rem' }} />
-
-      <p style={{ fontSize: '1.1rem', maxWidth: '500px', marginBottom: '1.5rem' }}>
-        Aplikasi <strong>Digital Desa</strong> saat ini sedang <strong>dinonaktifkan</strong> oleh pengelola.
-        Jika Anda membutuhkan bantuan, silakan hubungi pengembang atau admin melalui WhatsApp di bawah ini.
+      <p style={{ fontSize: '1.1rem', maxWidth: '500px' }}>
+        Untuk mendapatkan Aplikasi hubungi Pengembang Aplikasi.
       </p>
 
       <a
@@ -34,6 +41,7 @@ const Maintenance: React.FC = () => {
         target="_blank"
         rel="noopener noreferrer"
         style={{
+          marginTop: '2rem',
           padding: '10px 20px',
           backgroundColor: '#25D366',
           color: '#fff',
@@ -51,11 +59,24 @@ const Maintenance: React.FC = () => {
           from { opacity: 0; transform: translateY(-10px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        @media (max-width: 480px) {
-          h1 { font-size: 1.8rem; }
-          p { font-size: 1rem; }
-        }
       `}</style>
     </div>
   );
 };
+
+root.render(
+  <React.StrictMode>
+    <Maintenance />
+  </React.StrictMode>
+);
+
+/*
+// 👇 Kode aplikasi asli (nonaktifkan sementara)
+root.render(
+  <React.StrictMode>
+    <HashRouter>
+      <App />
+    </HashRouter>
+  </React.StrictMode>
+);
+*/
